@@ -24,6 +24,7 @@ import joblib
 print(pd.__version__)
 
 def main():
+    t1 = time.time()
     print('Starting to load encoded data...')
     Xtrain = np.load('data/Xtrain.npy')
     Xdev = np.load('data/Xdev.npy')
@@ -33,8 +34,16 @@ def main():
     ydev = np.load('data/ydev.npy')
     ytest = np.load('data/ytest.npy')
 
-    print('Starting to tune the KNN model')
+    print('Starting to tune the RF model')
+    rf_best_results, rf_saved_path = hyp_tuning('RF', Xtrain, ytrain, Xdev, ydev)
+    rf_best_model = joblib.load(rf_saved_path)
+    pred_test = rf_best_model.predict(Xtest)
+    mse_test = mean_squared_error(ytest, pred_test)
+    rf_best_results['Test_mse'] =  mse_test
+    print('RF model best results are {}'.format(rf_best_results))
 
+
+    print('Starting to tune the KNN model')
     knn_best_results, knn_saved_path = hyp_tuning('KNN', Xtrain, ytrain, Xdev, ydev)
     knn_best_model = joblib.load(knn_saved_path)
     pred_test = knn_best_model.predict(Xtest)
@@ -42,14 +51,7 @@ def main():
     knn_best_results['Test_mse'] = mse_test
     print('KNN model best results are {}'.format(knn_best_results))
 
-    print('Starting to tune the RF model')
-    rf_best_results, rf_saved_path = hyp_tuning('RF', Xtrain, ytrain, Xdev, ydev)
-    rf_best_model = joblib.load(rf_saved_path)
-    pred_test = rf_best_model.predict(Xtest)
-    mse_test = mean_squared_error(ytest, pred_test)
-    rf_best_results['Test_mse'] =  pred_test
-    print('RF model best results are {}'.format(rf_best_results))
-
+    
     print('Starting to run Linear Regression model')
     regr_multilr = MultiOutputRegressor(LinearRegression())
     regr_multilr.fit(Xtrain, ytrain)
@@ -70,13 +72,17 @@ def main():
     joblib.dump(regr_multilr, 'results/baseline_LR.joblib')
     print('Linear Regression results are {}'.format(lr_results))
 
+    t2 = time.time()
+
+    print('Total used the time {} seconds'.format(t2 -t1))
+
 
 
 def hyp_tuning(model_name, Xtrain, ytrain, Xdev, ydev):
     best_results = {}
     best_dev_mse = 1000
     
-    for hyp in range(1, 10):
+    for hyp in range(3, 15):
         
         print('='*20)
         print('starting to compute hyp={}'.format(hyp))
