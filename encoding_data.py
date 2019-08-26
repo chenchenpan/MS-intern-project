@@ -50,9 +50,15 @@ def main():
     previous_usage = args.previous_usage
 
 
-    df = pd.read_csv('TenantInfo-and-usage_shuffled_inf.csv'#, nrows=100
+    df = pd.read_csv('TenantInfo-and-usage_shuffled_inf.csv'#, nrows=1000
     )
     print('the full dataset size is {}'.format(df.shape))
+    # print('int columns are {}'.format(df.select_dtypes(include=['int']).columns.to_list()))
+    # print('object columns are {}'.format(df.select_dtypes(include=['object']).columns.to_list()))
+    # print('*' * 50)
+    # print(df.info())
+    # print('*' * 50)
+
 
     df_train, df_dev, df_test = split_dataset(df)
 
@@ -233,20 +239,93 @@ def encode_num_bool(df):
         
     Returns:
       X_bool: a numpy array that contains the encoded boolean inputs.
-      X_num: a numpy array that contains the encoded numerical inputs.
-      num_cols: a list that contains the numerical columns name.
+      X_int: a numpy array that contains the integer inputs.
+      X_float: a numpy array that contains the float inputs.
+      int_cols: a list that contains the integer columns name.
+      float_cols: a list that contains the float columns name.
       bool_cols: a list that contains the boolean columns name.
     """
-    
-    X_num = df.select_dtypes(include=['float','int'])
+    ## Since I found df.select_dtypes(include=['int']) is not reliable (you may get different
+    ## results if you run the same code in jupyter notebook)
+
+    int_cols = [
+        'AllupSeats',
+        'EXOSubscriptionsCount',
+        'OD4BSubscriptionsCount',
+        'SfBSubscriptionsCount',
+        'TeamsSubscriptionsCount',
+        'PaidCount',
+        'ProjectSubscriptionsCount',
+        'SPOSubscriptionsCount',
+        'ActivatedSubscriptionTotalCount',
+        'VisioSubscriptionsCount',
+        'TrialSubscriptionsCount',
+        'NonTrialSubscriptionsCount',
+        'EXOEnabledUsers',
+        'SPOEnabledUsers',
+        'OD4BEnabledUsers',
+        'SFBEnabledUsers',
+        'TeamEnabledUsers',
+        'YammerEnabledUsers',
+        'PPDEnabledUsers',
+        'KaizalaEnabledUsers',
+        'AADPEnabledUsers',
+        'AIPEnabledUsers',
+        'AATPEnabledUsers',
+        'IntuneEnabledUsers',
+        'MCASEnabledUsers',
+        'WDATPEnabledUsers',
+        'AudioConferenceEnabledUsers',
+        'PhoneSystemEnabledUsers',
+        'EdiscoveryEnabledUsers',
+        'ComplianceEnabledUsers ',
+        'ThreatIntelligenceEnabledUsers',
+        'CustomerLockboxEnabledUsers',
+        'OATPEnabledUsers',
+        'AADPP2EnabledUsers',
+        'AIPP2EnabledUsers',
+        'WindowsEnabledUsers ',
+        'O365CASEnabledUsers',
+        'CASDiscoveryEnabledUsers',
+        'PAMEnabledUsers',
+        'O365EnabledUsers',
+        'EMSEnabledUsers',
+        'M365EnabledUsers',
+        'O365E5EnabledUsers',
+        'EMSE5EnabledUsers',
+        'M365E5EnabledUsers',
+        'TotalUsers',
+        'PaidEXOSeats',
+        'PaidSPOSeats',
+        'PaidOD4BSeats',
+        'PaidYammerSeats',
+        'PaidTeamsSeats',
+        'PaidSFBSeats',
+        'PaidKaizalaSeats',
+        'PaidProplusSeats',
+        'PaidAADPSeats',
+        'PaidAIPSeats',
+        'PaidAATPSeats',
+        'PaidIntuneSeats',
+        'PaidMCASSeats',
+        'PaidWDATPSeats',
+        'PaidPhoneSystemSeats',
+        'PaidAIPP2Seats',
+    ]
+
+    X_int = df.loc[:, int_cols]
+
+    X_float = df.select_dtypes(include=['float'])
+
     X_bool = df.select_dtypes(include='bool')
 
-    num_cols = X_num.columns.to_list()
+    float_cols = X_float.columns.to_list()
     bool_cols = X_bool.columns.to_list()
     
     X_bool = X_bool.astype(int).to_numpy()
-    X_num = X_num.to_numpy()
-    return X_bool, X_num, num_cols, bool_cols
+    X_int = X_int.to_numpy()
+    X_float = X_float.to_numpy()
+    return X_bool, X_int, X_float, int_cols, float_cols, bool_cols
 
 
 
@@ -266,7 +345,7 @@ def encode_training_inputs(df_X):
     
     
     print('Starting to encode training inputs...')
-    X_bool, X_num, num_cols, bool_cols = encode_num_bool(df_X)
+    X_bool, X_int, X_float, int_cols, float_cols, bool_cols = encode_num_bool(df_X)
     
     df_X_id, df_X_cat, df_X_datetime = process_object_cols_for_inputs(df_X)
     
@@ -282,11 +361,11 @@ def encode_training_inputs(df_X):
     cat_encoded_cols = list(vocab_od.keys())
     
     ### normalize all the inputs ###
-    X_arr = np.concatenate((X_cat_encoded, X_num, X_bool, X_datetime), axis=1)
+    X_arr = np.concatenate((X_cat_encoded, X_int, X_float, X_bool, X_datetime), axis=1)
     scaler = StandardScaler()
     X_scal = scaler.fit_transform(X_arr)
 
-    cols_name = cat_encoded_cols + num_cols + bool_cols + datetime_cols
+    cols_name = cat_encoded_cols + int_cols + float_cols + bool_cols + datetime_cols
 
     assert len(cols_name) == X_scal.shape[1]
     
@@ -308,7 +387,7 @@ def encode_dev_test_inputs(df_X, dv, scaler):
     """
     
     print('Starting to encode dev or test inputs...')
-    X_bool, X_num, _, _ = encode_num_bool(df_X)
+    X_bool, X_int, X_float, _, _, _ = encode_num_bool(df_X)
     df_X_id, df_X_cat, df_X_datetime = process_object_cols_for_inputs(df_X)
     
     X_datetime, _ = encode_datetime(df_X_datetime)
@@ -318,7 +397,14 @@ def encode_dev_test_inputs(df_X, dv, scaler):
     X_cat_encoded = dv.transform(X_cat_dict)
 
     ### normalize all the inputs ###
-    X_arr = np.concatenate((X_cat_encoded, X_num, X_bool, X_datetime), axis=1)
+    # print('=' * 50)
+    # print(X_cat_encoded.shape)
+    # print(X_int.shape)
+    # print(X_float.shape)
+    # print(X_bool.shape)
+    # print(X_datetime.shape)
+    # print('=' * 50)
+    X_arr = np.concatenate((X_cat_encoded, X_int, X_float, X_bool, X_datetime), axis=1)
     
     X_scal = scaler.transform(X_arr)
     

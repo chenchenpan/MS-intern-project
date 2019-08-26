@@ -14,7 +14,7 @@ Xdev = np.load('data/Xdev.npy')
 ydev = np.load('data/ydev.npy')
 n_example, n_features = Xdev.shape
 
-model_n = 28
+model_n = 17
 opt = optimizers.Adam()
 
 # load json and create model
