@@ -46,7 +46,7 @@ for i in data_size:
     ytrain_selected = ytrain[:selected_size,:]
 
     model = MultiOutputRegressor(RandomForestRegressor(n_estimators=14, n_jobs=3, 
-    max_depth=, random_state=0))
+        max_depth=150, random_state=0))
     model.fit(Xtrain_selected, ytrain_selected)
     pred_dev = model.predict(Xdev)
     mse_dev = mean_squared_error(ydev, pred_dev)
