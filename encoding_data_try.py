@@ -136,7 +136,6 @@ def separate_input_output_cols(df, metadata):
                     'input_int': [...] 
                     'input_float': [...]
                     }      
-
     Returns:
       df_y: a DataFrame that stores the output labels
       df_X_float: a DataFrame that stores the float inputs
@@ -254,7 +253,7 @@ def encode_dataset(df, metadata, dv=None, scaler=None):
         cols_name += metadata['input_float']
 
     if df_X_int.shape[1] > 0:
-        X_int = encode_bool(df_X_int)
+        X_int = encode_num(df_X_int)
         X_list.append(X_int)
         cols_name += metadata['input_int']
 
@@ -264,7 +263,7 @@ def encode_dataset(df, metadata, dv=None, scaler=None):
         cols_name += metadata['input_bool']
     
     if df_X_datetime.shape[1] > 0:
-        X_datetime = encode_bool(df_X_datetime)
+        X_datetime = encode_datetime(df_X_datetime)
         X_list.append(X_datetime)
         cols_name += metadata['input_datetime']
     
