@@ -345,11 +345,12 @@ def encode_dataset(df, metadata, dv=None, scaler=None, text_token=[None, None]):
     if df_X_text.shape[1] > 0:
         text_cols = metadata['input_text']
         var = list(zip(text_cols, text_token))
-        for col, tok in var:
+        for i, v in enumerate(var):
+            col, tok = v
             if tok == None:
                 tok = TfidfVectorizer(max_df=0.9, min_df=10)
                 X_encoded = tok.fit_transform(df_X_text[col].values)
-                text_token.append(tok)
+                text_token[i] = tok
             else:
                 X_encoded = tok.transform(df_X_text[col].values)
             
