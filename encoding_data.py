@@ -157,9 +157,9 @@ def split_dataset(df, age=360, split_per=0.01):
     ### split test set from training set
     df_test = df_train.iloc[-split_size:,:]
     df_train = df_train.iloc[:-split_size,:]
-    print('df_test shape is {}'.format(df_dev.shape))
+
+    print('df_test shape is {}'.format(df_test.shape))
     print('df_train shape is {}'.format(df_train.shape))
-    
     return df_train, df_dev, df_test, df_young
 
 
