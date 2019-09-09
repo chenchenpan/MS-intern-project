@@ -15,12 +15,12 @@ import time
 # import joblib
 
 
-Xtrain = np.load('data/Xtrain.npy')
-Xdev = np.load('data/Xdev.npy')
-# Xtest = np.load('data/Xtest.npy')
-ytrain = np.load('data/ytrain.npy')
-ydev = np.load('data/ydev.npy')
-# ytest = np.load('data/ytest.npy')
+Xtrain = np.load('encoded_data_clip_fast/Xtrain.npy')
+Xdev = np.load('encoded_data_clip_fast/Xdev.npy')
+# Xtest = np.load('encoded_data/Xtest.npy')
+ytrain = np.load('encoded_data_clip_fast/ytrain.npy')
+ydev = np.load('encoded_data_clip_fast/ydev.npy')
+# ytest = np.load('encoded_data/ytest.npy')
 
 data_size = [0.001, 0.002, 0.004, 0.008, 0.016, 0.02, 0.03, 0.04, 0.08, 0.10, 0.15, 0.20]
 
@@ -60,4 +60,4 @@ for i in data_size:
     print('use time in {} seconds.'.format(t2-t1))
 
 rf_df = pd.DataFrame(rf_results)
-rf_df.to_csv('results/rf_results_with_14_estimators.csv', index=False)
+rf_df.to_csv('results_clip_fast/rf_results_with_14_estimators.csv', index=False)

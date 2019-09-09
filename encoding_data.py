@@ -69,12 +69,12 @@ def main():
     # print(df.info())
     # print('*' * 50)
 
-    metadata_path = os.path.join(args.input_dir, 'configure.json')
+    metadata_path = os.path.join(args.input_dir, args.configure_file)
     with open(metadata_path, 'r') as f:
         metadata = json.load(f)
 
 
-    df_train, df_dev, df_test, df_young = split_dataset(df)
+    df_train, df_dev, df_test = split_dataset(df)
 
     ### save the dev set raw data for demo purpose.
     save_path = os.path.join(args.output_dir, 'dev_set_raw_data.csv')
@@ -83,8 +83,6 @@ def main():
     ytrain, Xtrain, dv, scaler, text_token, cols_name = encode_dataset(df_train, metadata)
     ydev, Xdev, _, _, _, _ = encode_dataset(df_dev, metadata, dv=dv, scaler=scaler, text_token=text_token)
     ytest, Xtest, _, _, _, _ = encode_dataset(df_test, metadata, dv=dv, scaler=scaler, text_token=text_token)
-    yyoung, Xyoung, _, _, _, _ = encode_dataset(df_young, metadata, dv=dv, scaler=scaler, text_token=text_token)
-
 
     ### save the results.
     ytrain_path = os.path.join(args.output_dir, 'ytrain.npy')
@@ -93,8 +91,6 @@ def main():
     np.save(ydev_path, ydev)
     ytest_path = os.path.join(args.output_dir, 'ytest.npy')
     np.save(ytest_path, ytest)
-    yyoung_path = os.path.join(args.output_dir, 'yyoung.npy')
-    np.save(yyoung_path, yyoung)
     print('Saved the encoded outputs!')
 
     Xtrain_path = os.path.join(args.output_dir, 'Xtrain.npy')
@@ -103,8 +99,6 @@ def main():
     np.save(Xdev_path, Xdev)
     Xtest_path = os.path.join(args.output_dir, 'Xtest.npy')
     np.save(Xtest_path, Xtest)
-    Xyoung_path = os.path.join(args.output_dir, 'Xyoung.npy')
-    np.save(Xyoung_path, Xyoung)
     print('Saved the encoded inputs!')
 
     col_name_path = os.path.join(args.output_dir, 'encoded_columns_name.txt')
@@ -138,20 +132,13 @@ def str2bool(v):
         raise argparse.ArgumentTypeError('Boolean value expected.')
    
 
-def split_dataset(df, age=360, split_per=0.01):
-    df_train = df.loc[df['Age'] >= age]
-    df_young = df.loc[df['Age'] < age]
+def split_dataset(df, split_per=0.01):
     
-    df_train = df_train.drop('Age', axis=1)
-    df_young = df_young.drop('Age', axis=1)
-    
-    print('df_young shape is {}'.format(df_young.shape))
-    
-    ### split dev set from training set
-    split_size = int(df_train.shape[0] * split_per)
+    ### split dev and training set
+    split_size = int(df.shape[0] * split_per)
 
-    df_dev = df_train.iloc[-split_size:,:]
-    df_train = df_train.iloc[:-split_size,:]
+    df_dev = df.iloc[-split_size:,:]
+    df_train = df.iloc[:-split_size,:]
     print('df_dev shape is {}'.format(df_dev.shape))
 
     ### split test set from training set
@@ -160,7 +147,7 @@ def split_dataset(df, age=360, split_per=0.01):
 
     print('df_test shape is {}'.format(df_test.shape))
     print('df_train shape is {}'.format(df_train.shape))
-    return df_train, df_dev, df_test, df_young
+    return df_train, df_dev, df_test
 
 
 def separate_input_output_cols(df, metadata):

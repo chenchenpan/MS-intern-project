@@ -20,7 +20,7 @@ def main():
     
     # select data source folder
     parser.add_argument('--data_dir', type=str,
-        default='/data/home/t-chepan/projects/MS-intern-project/data',
+        default='/data/home/t-chepan/projects/MS-intern-project/encoded_data',
         help=('directory to load the encoded data.'))
     
     # parameter for saving models
@@ -28,6 +28,11 @@ def main():
         default='/data/home/t-chepan/projects/MS-intern-project/results',
         help=('directory to store final and intermediate '
             'results and models.'))
+    
+    # parameter for number of trials
+    parser.add_argument('--trial_num', type=int,
+        default=10,
+        help=('how many models you want to try?'))
 
 
     args = parser.parse_args()
@@ -36,6 +41,10 @@ def main():
     print('Starting to load data...')
     Xtrain_path = os.path.join(args.data_dir, 'Xtrain.npy')
     Xtrain = np.load(Xtrain_path)
+
+    # ### check encoded data has no nan
+    # if np.any(Xtrain == nan)
+
     full_size = Xtrain.shape[0]
     selected_size = int(full_size * args.training_size)
 
@@ -54,7 +63,7 @@ def main():
     n_outputs = ytrain.shape[1]
 
     EPOCHS = 200
-    PATIENCE = 20
+    PATIENCE = 5
 
     def train_model(hyp_params, max_n_epoch=EPOCHS, patience=PATIENCE, name='model'):
         inputs = keras.Input(shape=(n_features,), name='input_features')
@@ -62,6 +71,7 @@ def main():
 
         for _ in range(hyp_params['n_fc_layers']-1):
             x = layers.Dense(hyp_params['fc_hidden_size'], activation='relu')(x)
+            # x = layers.Dropout(hyp_params['dropout_rate'])(x)
 
         outputs = layers.Dense(n_outputs)(x)
 
@@ -106,21 +116,22 @@ def main():
     
     
     experiments = []
-    for i in range(60):
+    for i in range(args.trial_num):
         hyp_params = {'n_fc_layers': 3,
+            # 'dropout_rate': 0.5,
             'fc_hidden_size': 64,
             'opt': 'adam',
-            'lr': 0.001}
+            'lr': 0.0003338803745438395}
 
-        hyp_params['n_fc_layers'] = np.random.randint(2, 6)
-        hyp_params['fc_hidden_size'] = [64, 128, 256][np.random.randint(0, 3)]
-        hyp_params['lr'] = 10 ** (np.random.uniform(-2, -4))
+        hyp_params['n_fc_layers'] = np.random.randint(3, 6)
+        # hyp_params['dropout_rate'] = np.random.uniform(0.0, 0.5)
+        hyp_params['fc_hidden_size'] = [64, 128][np.random.randint(0, 2)]
+        hyp_params['lr'] = 10 ** (np.random.uniform(-3, -5))
         hyp_params['opt'] = ['adam', 'sgd', 'rmsprop'][np.random.randint(0,3)]
         print(i)
         print(hyp_params)
         hist, _ = train_model(hyp_params, name="NNmodel_{}_with_{}data".format(i, args.training_size))
-        experiments.append({'hyperparam': hyp_params, 'history': hist.history, 
-                            # 'best_val_loss': min(hist.history['val_loss']), 
+        experiments.append({'hyperparam': hyp_params, 'history': hist.history,  
                             'best_dev_mse': min(hist.history['val_mean_squared_error'])})
         print(hist.history['val_mean_squared_error'])
 

@@ -15,12 +15,12 @@ import time
 # import joblib
 
 
-Xtrain = np.load('data/Xtrain.npy')
-Xdev = np.load('data/Xdev.npy')
-# Xtest = np.load('data/Xtest.npy')
-ytrain = np.load('data/ytrain.npy')
-ydev = np.load('data/ydev.npy')
-# ytest = np.load('data/ytest.npy')
+Xtrain = np.load('encoded_data_clip_fast/Xtrain.npy')
+Xdev = np.load('encoded_data_clip_fast/Xdev.npy')
+# Xtest = np.load('encoded_data/Xtest.npy')
+ytrain = np.load('encoded_data_clip_fast/ytrain.npy')
+ydev = np.load('encoded_data_clip_fast/ydev.npy')
+# ytest = np.load('encoded_data/ytest.npy')
 
 data_size = [0.001, 0.002, 0.004, 0.008, 0.016, 0.02, 0.03, 0.04, 0.08, 0.10, 0.15, 0.20]
 
@@ -42,7 +42,7 @@ for i in data_size:
     Xtrain_selected = Xtrain[:selected_size,:]
     ytrain_selected = ytrain[:selected_size,:]
 
-    model = MultiOutputRegressor(KNeighborsRegressor(n_neighbors=5, n_jobs=3))
+    model = MultiOutputRegressor(KNeighborsRegressor(n_neighbors=5, n_jobs=2))
     model.fit(Xtrain_selected, ytrain_selected)
     pred_dev = model.predict(Xdev)
     mse_dev = mean_squared_error(ydev, pred_dev)
@@ -56,4 +56,4 @@ for i in data_size:
     print('used time in {} secondes.'.format(t2-t1))
 
 knn_df = pd.DataFrame(knn_results)
-knn_df.to_csv('results/knn_results_with_5_neighbors.csv', index=False)
+knn_df.to_csv('results_clip_fast/knn_results_with_5_neighbors.csv', index=False)
