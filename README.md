@@ -16,5 +16,5 @@ This repo contains the code for data preprocessing, building and training multi-
 After installing the dependencies, run the following command to replicate the experiment results.
 
 ```
-run_orig_model_clipdata_tryFasterTuning.sh
+./run_orig_model_clipdata_tryFasterTuning.sh
 ```
