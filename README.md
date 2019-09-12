@@ -18,3 +18,5 @@ After installing the dependencies, run the following command to replicate the ex
 ```
 ./run_orig_model_clipdata_tryFasterTuning.sh
 ```
+
+Then you can use `load-NN-best-with-clip-data.ipynb` to load and analyze the best model.
