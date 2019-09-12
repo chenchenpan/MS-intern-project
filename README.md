@@ -10,3 +10,11 @@ This repo contains the code for data preprocessing, building and training multi-
 - Python 3.5
 - TensorFlow >= 1.7
 - Other required packages are summarized in `requirements.txt`.
+
+# Quickstart
+
+After installing the dependencies, run the following command to replicate the experiment results.
+
+```
+run_orig_model_clipdata_tryFasterTuning.sh
+```
