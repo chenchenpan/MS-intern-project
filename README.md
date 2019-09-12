@@ -25,8 +25,14 @@ Then you can use `load-NN-best-with-clip-data.ipynb` to load and analyze the bes
 
 `encode_data.py` can be used to encode a csv file into numpy arrays. It takes two files as inputs: the raw data file (CSV file) and a corresponding configuration file (a metadata JSON file that describes the datatype of each column). `raw_data/create-configure-metadata.ipynb` is an example that generates a configuration file.
 
-`encode_data.py` performs four steps:
+`encode_data.py` performs five steps:
 - Split dataset into training, dev and test set.
 - Clarify the input features and output labels.
 - Encode different data type inputs.
 - Concatenate and normalize all the encoded sub-inputs.
+- Encode text input using TFIDF. 
+
+# Hyperparameter tuning
+
+`NN-hyp-tuning.py` can be used to build and tune the hyperparameters of feedforward neural network models. The hyperparameters tuned includes the number of hidden layers, hidden sizes, and learning rate. You can add more hyperparameters or adjust the range by modifying this file. 
+
