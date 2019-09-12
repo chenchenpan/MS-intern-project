@@ -20,3 +20,13 @@ After installing the dependencies, run the following command to replicate the ex
 ```
 
 Then you can use `load-NN-best-with-clip-data.ipynb` to load and analyze the best model.
+
+# Data encoding
+
+`encode_data.py` can be used to encode a csv file into numpy arrays. It takes two files as inputs: the raw data file (CSV file) and a corresponding configuration file (a metadata JSON file that describes the datatype of each column). `raw_data/create-configure-metadata.ipynb` is an example that generates a configuration file.
+
+`encode_data.py` performs four steps:
+- Split dataset into training, dev and test set.
+- Clarify the input features and output labels.
+- Encode different data type inputs.
+- Concatenate and normalize all the encoded sub-inputs.
