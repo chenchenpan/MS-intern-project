@@ -22,8 +22,8 @@ ytrain = np.load('encoded_data_clip_fast/ytrain.npy')
 ydev = np.load('encoded_data_clip_fast/ydev.npy')
 # ytest = np.load('encoded_data/ytest.npy')
 
-data_size = [0.001, 0.002, 0.004, 0.008, 0.016, 0.02, 0.03, 0.04, 0.08, 0.10, 0.15, 0.20]
-
+# data_size = [0.001, 0.002, 0.004, 0.008, 0.016, 0.02, 0.03, 0.04, 0.08, 0.10, 0.15, 0.20]
+data_size = [0.20]
 ## RF model
 rf_results = []
 full_size = Xtrain.shape[0]
@@ -59,5 +59,5 @@ for i in data_size:
     t2 = time.time()
     print('use time in {} seconds.'.format(t2-t1))
 
-rf_df = pd.DataFrame(rf_results)
-rf_df.to_csv('results_clip_fast/rf_results_with_14_estimators.csv', index=False)
+# rf_df = pd.DataFrame(rf_results)
+# rf_df.to_csv('results_clip_fast/rf_results_with_14_estimators.csv', index=False)
