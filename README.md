@@ -8,8 +8,8 @@ This repo contains the code for data preprocessing, building and training multi-
 
 We store all the raw data and related configuration files at https://opgsupportcall.blob.core.windows.net/recommenderrawdata.
 We also keep the original results on the Blob containers:
-- the one with DAU: https://opgsupportcall.blob.core.windows.net/recommenderwithdau
-- the one with DAU + verbatim: https://opgsupportcall.blob.core.windows.net/recommenderwith
+- the one with DAU: https://opgsupportcall.blob.core.windows.net/recommender-with-dau
+- the one with DAU + verbatim: https://opgsupportcall.blob.core.windows.net/recommenderwithverbatim
 - the one with new MAU: https://opgsupportcall.blob.core.windows.net/recommendwithnewmau
 
 
