@@ -1,1 +1,0 @@
-# We stored the raw data and the related config files at https://opgsupportcall.blob.core.windows.net/recommenderrawdata.
