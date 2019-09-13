@@ -21,7 +21,7 @@ We also keep the original results on the Blob containers:
 
 # Quickstart
 
-After installing the dependencies, run the following command to replicate the experiment results.
+After installing the dependencies, run the following command to replicate the experiment results. However, you 
 
 ```
 ./run_orig_model_clipdata_tryFasterTuning.sh
