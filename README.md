@@ -4,6 +4,14 @@ This project aims to increase the usage of purchased workloads for O365 SMB usin
 
 This repo contains the code for data preprocessing, building and training multi-task neural networks and hypeprparameter tuning using random search. 
 
+# Data storage
+
+We store all the raw data and related configuration files at https://opgsupportcall.blob.core.windows.net/recommenderrawdata.
+We also keep the original results on the Blob containers:
+- the one with DAU: https://opgsupportcall.blob.core.windows.net/recommenderwithdau
+- the one with DAU + verbatim: https://opgsupportcall.blob.core.windows.net/recommenderwith
+- the one with new MAU: https://opgsupportcall.blob.core.windows.net/recommendwithnewmau
+
 
 # Dependencies
 
