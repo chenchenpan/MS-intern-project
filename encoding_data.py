@@ -298,6 +298,19 @@ def encode_dataset(df, metadata, dv=None, scaler=None, text_token=[None, None]):
         X_list.append(X_datetime)
         cols_name += metadata['input_datetime']
     
+    ### normalize all the inputs except categorical and text features
+    X_arr = np.concatenate(X_list, axis=1)
+
+    if scaler == None:
+        scaler = StandardScaler()
+        X_scal = scaler.fit_transform(X_arr)
+    else:
+        X_scal = scaler.transform(X_arr)
+
+    assert len(cols_name) == X_scal.shape[1]
+    print('Except categorical and text input data after encoding, the shape is {}'.format(X_scal.shape))
+    print('we have {} columns.'.format(len(cols_name)))
+
     ### encode the categorical columns 
     if df_X_cat.shape[1] > 0:
         X_cat_dict = df_X_cat.to_dict(orient='records')
@@ -315,18 +328,12 @@ def encode_dataset(df, metadata, dv=None, scaler=None, text_token=[None, None]):
         cat_encoded_cols = list(vocab_od.keys())
         cols_name += cat_encoded_cols
     
-    ### normalize all the inputs except text features
-    X_arr = np.concatenate(X_list, axis=1)
-
-    if scaler == None:
-        scaler = StandardScaler()
-        X_scal = scaler.fit_transform(X_arr)
-    else:
-        X_scal = scaler.transform(X_arr)
+    ### concatenate categorical features and normalized inputs
+    X_scal = np.concatenate([X_scal, X_cat], axis=1)
 
     assert len(cols_name) == X_scal.shape[1]
-    print('non-text input data after encoding, the shape is {}'.format(X_scal.shape))
-    print('we have {} columns.'.format(len(cols_name)))
+    print('Non-text input data after encoding, the shape is {}'.format(X_scal.shape))
+    print('We have {} columns.'.format(len(cols_name)))
 
     ## encode text columns, encoded text features should not be normalized.
     if df_X_text.shape[1] > 0:
