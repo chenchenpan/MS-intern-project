@@ -10,3 +10,29 @@ This repo contains the code for data preprocessing, building and training multi-
 - Python 3.5
 - TensorFlow >= 1.7
 - Other required packages are summarized in `requirements.txt`.
+
+# Quickstart
+
+After installing the dependencies, run the following command to replicate the experiment results.
+
+```
+./run_orig_model_clipdata_tryFasterTuning.sh
+```
+
+Then you can use `load-NN-best-with-clip-data.ipynb` to load and analyze the best model.
+
+# Data encoding
+
+`encode_data.py` can be used to encode a csv file into numpy arrays. It takes two files as inputs: the raw data file (CSV file) and a corresponding configuration file (a metadata JSON file that describes the datatype of each column). `raw_data/create-configure-metadata.ipynb` is an example that generates a configuration file.
+
+`encode_data.py` performs five steps:
+- Split dataset into training, dev and test set.
+- Clarify the input features and output labels.
+- Encode different data type inputs.
+- Concatenate and normalize all the encoded sub-inputs.
+- Encode text input using TFIDF. 
+
+# Hyperparameter tuning
+
+`NN-hyp-tuning.py` can be used to build and tune the hyperparameters of feedforward neural network models. The hyperparameters tuned includes the number of hidden layers, hidden sizes, and learning rate. You can add more hyperparameters or adjust the range by modifying this file. 
+
